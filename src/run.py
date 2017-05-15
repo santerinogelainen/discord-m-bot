@@ -2,6 +2,8 @@ import discord
 import asyncio
 import os
 import player
+import stats
+from config import Config
 
 client = discord.Client()
 music = player.Player(client)
@@ -78,6 +80,17 @@ async def on_message(message):
     if (message.content.startswith('!skip') and message.author != client.user):
         music.next_song()
 
+    #!sr
+    if ((message.content.startswith('!sr') or message.content.startswith('!elo')) and message.author != client.user):
+        param = message.content.split()[-1]
+        s = stats.Stats(param).get("ow")
+        await client.send_message(message.channel, s)
+
+    #!rank
+    if (message.content.startswith('!rank') and message.author != client.user):
+        param = message.content.split()
+        s = stats.Stats(param[-1]).get(param[1])
+        await client.send_message(message.channel, s)
 
     #!clear
     if (message.content.startswith('!clear') and message.author != client.user):
@@ -104,4 +117,4 @@ async def on_message(message):
         await client.logout()
         os.system(path)
 
-client.run("your thing config file to do")
+client.run(Config.token["discord"])

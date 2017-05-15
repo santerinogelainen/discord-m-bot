@@ -3,6 +3,7 @@ import asyncio
 import json
 import requests
 from urllib.parse import urlparse
+from config import Config
 
 class Player:
 
@@ -134,14 +135,14 @@ class Player:
     def get_playlist_urls(self, parsedurl):
         urls = []
         try:
-            r = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" + parsedurl.query.split("&")[0].split("=")[1] + "&key=YOURAPITHING&maxResults=50")
+            r = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" + parsedurl.query.split("&")[0].split("=")[1] + "&key=" + Config.token["youtube"] + "&maxResults=50")
             data = json.loads(r.text)
             for item in data["items"]:
                 urls.append("https://www.youtube.com/watch?v=" + item["snippet"]["resourceId"]["videoId"])
         except:
             return False
         while "nextPageToken" in data:
-            r = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" + parsedurl.query.split("&")[0].split("=")[1] + "&key=YOURAPITHING&maxResults=50&pageToken=" + data["nextPageToken"])
+            r = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" + parsedurl.query.split("&")[0].split("=")[1] + "&key=" + Config.token["youtube"] + "&maxResults=50&pageToken=" + data["nextPageToken"])
             data = json.loads(r.text)
             for item in data["items"]:
                 urls.append("https://www.youtube.com/watch?v=" + item["snippet"]["resourceId"]["videoId"])
